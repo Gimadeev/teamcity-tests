@@ -8,6 +8,7 @@ import com.example.teamcity.api.requests.checked.CheckedUser;
 import com.example.teamcity.api.requests.unchecked.UncheckedBuildConfig;
 import com.example.teamcity.api.requests.unchecked.UncheckedProject;
 import com.example.teamcity.api.spec.Specifications;
+import com.example.teamcity.api.texts.Errors;
 import org.apache.http.HttpStatus;
 import org.hamcrest.Matchers;
 import org.testng.annotations.Test;
@@ -44,7 +45,7 @@ public class BuildConfigurationTest extends BaseApiTest {
         new UncheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser()))
                 .create(testData.getBuildType())
                 .then().assertThat().statusCode(HttpStatus.SC_BAD_REQUEST)
-                .body(Matchers.containsString("When creating a build type, non empty name should be provided"));
+                .body(Matchers.containsString(Errors.CREATING_BUILD_EMPTY_NAME));
     }
 
     @Test
@@ -61,7 +62,7 @@ public class BuildConfigurationTest extends BaseApiTest {
         new UncheckedBuildConfig(Specifications.getSpec().authSpec(testData.getUser()))
                 .create(testData.getBuildType())
                 .then().assertThat().statusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-                .body(Matchers.containsString("Build configuration or template ID must not be empty"));
+                .body(Matchers.containsString(Errors.CREATING_BUILD_EMPTY_ID));
     }
 
     @Test
@@ -83,7 +84,8 @@ public class BuildConfigurationTest extends BaseApiTest {
         new UncheckedBuildConfig(Specifications.getSpec().authSpec(firstTestData.getUser()))
                 .create(secondTestData.getBuildType())
                 .then().assertThat().statusCode(HttpStatus.SC_BAD_REQUEST)
-                .body(Matchers.containsString("ID \"" + secondTestData.getBuildType().getId() + "\" is already used by another configuration"));
+                .body(Matchers.containsString(String.format(Errors.CREATING_BUILD_UNIQUE_ID,
+                        secondTestData.getBuildType().getId())));
     }
 
     @Test
@@ -105,8 +107,9 @@ public class BuildConfigurationTest extends BaseApiTest {
         new UncheckedBuildConfig(Specifications.getSpec().authSpec(firstTestData.getUser()))
                 .create(secondTestData.getBuildType())
                 .then().assertThat().statusCode(HttpStatus.SC_BAD_REQUEST)
-                .body(Matchers.containsString("Build configuration with name \"" + secondTestData
-                        .getBuildType().getName() + "\" already exists in project: \"" + firstTestData.getProject().getName() + "\""));
+                .body(Matchers.containsString(String.format(Errors.CREATING_BUILD_UNIQUE_NAME,
+                        secondTestData.getBuildType().getName(),
+                        firstTestData.getProject().getName())));
     }
 
     @Test
