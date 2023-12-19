@@ -1,29 +1,26 @@
 package com.example.teamcity.ui;
 
-import com.codeborne.selenide.Selenide;
-import com.codeborne.selenide.selector.ByAttribute;
-import com.example.teamcity.api.requests.checked.CheckedUser;
-import com.example.teamcity.api.spec.Specifications;
+import com.codeborne.selenide.Condition;
+import com.example.teamcity.ui.pages.favorites.ProjectsPage;
+import com.example.teamcity.ui.pages.admin.CreateNewProject;
 import org.testng.annotations.Test;
-
-import static com.codeborne.selenide.Selenide.element;
 
 public class CreateNewProjectTest extends BaseUiTest{
     @Test
     public void authorizedUserShouldBeAbleToCreateNewProject() {
         var testData = testDataStorage.addTestData();
+        var url = "https://github.com/Gimadeev/symmetrical-octo-goggles";
 
-        new CheckedUser(Specifications.getSpec().superUserSpec()).create(testData.getUser());
+        loginAsUser(testData.getUser());
 
-        Selenide.open("/login.html");
+        new CreateNewProject()
+                .open(testData.getProject().getParentProject().getLocator())
+                .createProjectByUrl(url)
+                .setupProject(testData.getProject().getName(), testData.getBuildType().getName());
 
-        var usernameInput = element(new ByAttribute("id", "username"));
-        var passwordInput = element(new ByAttribute("id", "password"));
-        var loginButton = element(new ByAttribute("type", "submit"));
-
-        usernameInput.sendKeys(testData.getUser().getUsername());
-        passwordInput.sendKeys(testData.getUser().getPassword());
-
-        loginButton.click();
+        new ProjectsPage().open()
+                .getSubprojects()
+                .stream().reduce((first, second) -> second).get()
+                .getHeader().shouldHave(Condition.text(testData.getProject().getName()));
     }
 }
