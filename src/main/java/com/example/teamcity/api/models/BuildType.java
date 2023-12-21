@@ -12,5 +12,6 @@ import lombok.NoArgsConstructor;
 public class BuildType {
     private String id;
     private String name;
+    private String description;
     private NewProjectDescription project;
 }

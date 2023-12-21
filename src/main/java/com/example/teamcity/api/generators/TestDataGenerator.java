@@ -30,12 +30,14 @@ public class TestDataGenerator {
                         .build())
                 .name(RandomData.getString())
                 .id(RandomData.getString())
+                .description(RandomData.getCustomLengthString(40))
                 .copyAllAssociatedSettings(true)
                 .build();
 
         var buildType = BuildType.builder()
                 .id(RandomData.getString())
                 .name(RandomData.getString())
+                .description(RandomData.getCustomLengthString(40))
                 .project(project)
                 .build();
 
