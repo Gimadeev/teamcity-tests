@@ -14,5 +14,6 @@ public class Project {
     private String name;
     private String parentProjectId;
     private String locator;
+    private String description;
     private BuildTypes buildTypes;
 }
