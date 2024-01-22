@@ -18,4 +18,10 @@ public class Selectors {
     public static ByAttribute byClass(String value) {
         return new ByAttribute("class", value);
     }
+    public static ByAttribute byName(String value) {
+        return new ByAttribute("name", value);
+    }
+    public static ByAttribute byText(String value) {
+        return new ByAttribute("text", value);
+    }
 }
